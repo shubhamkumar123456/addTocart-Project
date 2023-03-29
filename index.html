@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+       #items{
+        margin-top: 1rem;
+       }
+       .appendContainer{
+        margin-bottom: 0.5rem;
+       }
+    </style>
+</head>
+<body>
+    <form action="'">
+    <label for="price">Selling Price:</label>
+        <input type="number" id="price">
+        <label for="productName">Product Name:</label>
+        <input type="text" id="productName">
+        <button type="submit" id="submit">Add Product</button>
+    </form>
+       <h2>Products:- </h2>
+    <div id="items">
+     
+    </div>
+    <div id="totalBox">
+        <h3>Total value worth of products:Rs <span id="countPrice">0</span></h3>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.4/axios.min.js"></script>
+    <script>
+        const price=document.getElementById('price');
+        const Productname=document.getElementById('productName');
+        const submit= document.getElementById('submit');
+        let items=document.getElementById('items');
+        const countPrice=document.getElementById('countPrice');
+
+        submit.addEventListener('click', saveData);
+
+        function saveData(e){
+            e.preventDefault();
+            let obj={
+                price:price.value,
+                product:Productname.value
+            }
+            axios.post("https://crudcrud.com/api/334ffd9865604e528482aca0f0cd6f19/productsapi",obj)
+            .then((res)=>{
+                console.log("created successfully")
+                getData();
+            })
+        }
+        function getData(){
+            axios.get("https://crudcrud.com/api/334ffd9865604e528482aca0f0cd6f19/productsapi")
+            .then((res)=>{
+                console.log(res.data)
+                appendData(res.data)
+            })
+        }
+        getData()
+      
+          
+         let count=0;
+        function appendData(arr){
+               let sum=0
+            items.innerHTML=null;
+            arr.forEach((element,index)=>{
+              
+                let div1= document.createElement("div")
+                div1.className="appendContainer"
+                let span1= document.createElement("span");
+                span1.innerHTML=element.price
+                let span2= document.createElement("span");
+                span2.innerHTML=element.product
+                let delBtn= document.createElement("Button");
+                delBtn.innerText="Delete Item";
+
+                delBtn.onclick=(e)=>{
+            axios.delete(`https://crudcrud.com/api/334ffd9865604e528482aca0f0cd6f19/productsapi/${element._id}`)
+            .then((res)=>{
+                console.log("deleted successfully")
+                getData();
+            })
+        }
+
+             count=count+parseInt(element.price);
+             console.log(count);
+         
+              
+                // count=count+countvalue
+        
+               div1.append(span1,"-",span2,"-",delBtn);
+                items.append(div1);
+                 
+            });
+              countPrice.innerText=count;
+              count=0;
+
+     
+
+        }    
+    </script>
+</body>
+</html>
